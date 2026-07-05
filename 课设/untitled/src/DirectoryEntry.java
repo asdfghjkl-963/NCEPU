@@ -1,4 +1,3 @@
-// DirectoryEntry.java - 修复后
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -40,28 +39,28 @@ public class DirectoryEntry {
         DataOutputStream dos = new DataOutputStream(baos);
 
         try {
-            // 写入文件名
+      
             byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
             byte[] nameBuffer = new byte[MAX_NAME_LENGTH];
             System.arraycopy(nameBytes, 0, nameBuffer, 0, Math.min(nameBytes.length, MAX_NAME_LENGTH));
             dos.write(nameBuffer);
 
-            // 写入类型
+         
             dos.writeInt(type == FileType.DIRECTORY ? 1 : 0);
 
-            // 写入首块号
+          
             dos.writeInt(firstBlock);
 
-            // 写入大小
+         
             dos.writeInt(size);
 
-            // 写入创建时间
+          
             dos.writeLong(createTime);
 
-            // 写入修改时间
+        
             dos.writeLong(modifyTime);
 
-            // 补齐剩余字节
+            
             byte[] result = baos.toByteArray();
             if (result.length < ENTRY_SIZE) {
                 byte[] padded = new byte[ENTRY_SIZE];
@@ -81,31 +80,31 @@ public class DirectoryEntry {
         DataInputStream dis = new DataInputStream(bais);
 
         try {
-            // 读取文件名
+          
             byte[] nameBuffer = new byte[MAX_NAME_LENGTH];
             dis.readFully(nameBuffer);
             String nameStr = new String(nameBuffer, StandardCharsets.UTF_8).trim();
-            // 去除空字符
+        
             int nullIndex = nameStr.indexOf('\0');
             if (nullIndex != -1) {
                 nameStr = nameStr.substring(0, nullIndex);
             }
             entry.name = nameStr;
 
-            // 读取类型
+           
             int typeInt = dis.readInt();
             entry.type = typeInt == 1 ? FileType.DIRECTORY : FileType.FILE;
 
-            // 读取首块号
+           
             entry.firstBlock = dis.readInt();
 
-            // 读取大小
+           
             entry.size = dis.readInt();
 
-            // 读取创建时间
+            
             entry.createTime = dis.readLong();
 
-            // 读取修改时间
+            
             entry.modifyTime = dis.readLong();
 
         } catch (IOException e) {
