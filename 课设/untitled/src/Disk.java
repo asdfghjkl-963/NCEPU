@@ -1,4 +1,3 @@
-// Disk.java - 修复后的完整版本
 import java.io.*;
 import java.util.Arrays;
 
@@ -17,32 +16,32 @@ public class Disk {
         blocks = new byte[TOTAL_BLOCKS][BLOCK_SIZE];
         fat = new short[FAT_SIZE];
 
-        // 初始化FAT，-1表示空闲，-2表示结束
+      
         Arrays.fill(fat, (short)-1);
-        // 标记根目录
+     
         fat[ROOT_DIR_BLOCK] = -2;
 
         loadFromFile();
     }
 
-    // 添加这个方法
+ 
     private void initializeDisk() {
-        // 初始化所有数据块为0
+      
         for (int i = 0; i < TOTAL_BLOCKS; i++) {
             Arrays.fill(blocks[i], (byte)0);
         }
 
-        // 初始化FAT表
+       
         Arrays.fill(fat, (short)-1);
 
-        // FAT表占用前2块，标记为已使用
+       
         fat[0] = -2;
         fat[1] = -2;
 
-        // 根目录占用第2块
+      
         fat[ROOT_DIR_BLOCK] = -2;
 
-        // 初始化根目录为空目录
+       
         writeDirectory(ROOT_DIR_BLOCK, new java.util.ArrayList<>());
     }
 
@@ -55,18 +54,18 @@ public class Disk {
         }
 
         try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
-            // 读取FAT表
+      
             for (int i = 0; i < FAT_SIZE; i++) {
                 fat[i] = raf.readShort();
             }
 
-            // 读取数据块
+        
             for (int i = 0; i < TOTAL_BLOCKS; i++) {
                 raf.readFully(blocks[i]);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            // 如果读取失败，重新初始化
+      
             initializeDisk();
             saveToFile();
         }
@@ -74,12 +73,12 @@ public class Disk {
 
     public void saveToFile() {
         try (RandomAccessFile raf = new RandomAccessFile(diskFile, "rw")) {
-            // 写入FAT表
+         
             for (int i = 0; i < FAT_SIZE; i++) {
                 raf.writeShort(fat[i]);
             }
 
-            // 写入数据块
+            
             for (int i = 0; i < TOTAL_BLOCKS; i++) {
                 raf.write(blocks[i]);
             }
@@ -119,7 +118,7 @@ public class Disk {
         while (current != -1 && current != -2) {
             int next = fat[current];
             fat[current] = -1;
-            // 清空数据块
+      
             Arrays.fill(blocks[current], (byte)0);
             current = next;
         }
@@ -129,7 +128,7 @@ public class Disk {
         return fat;
     }
 
-    // 添加读目录方法
+
     public java.util.List<DirectoryEntry> readDirectory(int blockNum) {
         java.util.List<DirectoryEntry> entries = new java.util.ArrayList<>();
         byte[] blockData = readBlock(blockNum);
@@ -147,7 +146,7 @@ public class Disk {
         return entries;
     }
 
-    // 添加写目录方法
+    
     public void writeDirectory(int blockNum, java.util.List<DirectoryEntry> entries) {
         byte[] blockData = new byte[BLOCK_SIZE];
         int offset = 0;
