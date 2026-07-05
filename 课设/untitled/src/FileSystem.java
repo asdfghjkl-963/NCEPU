@@ -41,29 +41,29 @@ public class FileSystem {
         int parentBlock = pathToBlock.get(currentPath);
         List<DirectoryEntry> parentEntries = readDirectory(parentBlock);
 
-        // 检查是否已存在
+        
         for (DirectoryEntry entry : parentEntries) {
             if (entry.getName().equals(name)) {
                 return false;
             }
         }
 
-        // 分配新目录块
+       
         int newBlock = disk.allocateBlock();
         if (newBlock == -1) {
             return false;
         }
 
-        // 创建目录项
+   
         DirectoryEntry newEntry = new DirectoryEntry(name, DirectoryEntry.FileType.DIRECTORY, newBlock, 0);
         parentEntries.add(newEntry);
         writeDirectory(parentBlock, parentEntries);
 
-        // 更新缓存
+   
         String newPath = currentPath.equals("/") ? "/" + name : currentPath + "/" + name;
         pathToBlock.put(newPath, newBlock);
 
-        // 初始化空目录
+    
         writeDirectory(newBlock, new ArrayList<>());
 
         disk.saveToFile();
@@ -78,14 +78,14 @@ public class FileSystem {
         int parentBlock = pathToBlock.get(currentPath);
         List<DirectoryEntry> parentEntries = readDirectory(parentBlock);
 
-        // 检查是否已存在
+     
         for (DirectoryEntry entry : parentEntries) {
             if (entry.getName().equals(name)) {
                 return false;
             }
         }
 
-        // 分配数据块
+      
         byte[] contentBytes = content.getBytes();
         int numBlocks = (contentBytes.length + Disk.BLOCK_SIZE - 1) / Disk.BLOCK_SIZE;
         List<Integer> blocks = new ArrayList<>();
@@ -93,7 +93,7 @@ public class FileSystem {
         for (int i = 0; i < numBlocks; i++) {
             int block = disk.allocateBlock();
             if (block == -1) {
-                // 回滚已分配的块
+           
                 for (int allocated : blocks) {
                     disk.freeBlocks(allocated);
                 }
@@ -102,7 +102,7 @@ public class FileSystem {
             blocks.add(block);
         }
 
-        // 写入数据
+      
         int offset = 0;
         for (int i = 0; i < blocks.size(); i++) {
             int blockNum = blocks.get(i);
@@ -113,7 +113,7 @@ public class FileSystem {
             offset += length;
         }
 
-        // 设置FAT链
+      
         for (int i = 0; i < blocks.size(); i++) {
             int current = blocks.get(i);
             if (i < blocks.size() - 1) {
@@ -123,7 +123,7 @@ public class FileSystem {
             }
         }
 
-        // 创建目录项
+      
         int firstBlock = blocks.get(0);
         DirectoryEntry newEntry = new DirectoryEntry(name, DirectoryEntry.FileType.FILE, firstBlock, contentBytes.length);
         parentEntries.add(newEntry);
@@ -150,10 +150,10 @@ public class FileSystem {
         }
 
         DirectoryEntry entry = parentEntries.get(index);
-        // 释放数据块
+
         disk.freeBlocks(entry.getFirstBlock());
 
-        // 删除目录项
+    
         parentEntries.remove(index);
         writeDirectory(parentBlock, parentEntries);
 
@@ -178,20 +178,20 @@ public class FileSystem {
         }
 
         DirectoryEntry entry = parentEntries.get(index);
-        // 检查目录是否为空
+
         List<DirectoryEntry> dirEntries = readDirectory(entry.getFirstBlock());
         if (!dirEntries.isEmpty()) {
-            return false; // 目录非空，不能删除
+            return false; 
         }
 
-        // 释放目录块
+        
         disk.freeBlocks(entry.getFirstBlock());
 
-        // 删除目录项
+        
         parentEntries.remove(index);
         writeDirectory(parentBlock, parentEntries);
 
-        // 更新缓存
+    
         String dirPath = currentPath.equals("/") ? "/" + name : currentPath + "/" + name;
         pathToBlock.remove(dirPath);
 
@@ -208,7 +208,7 @@ public class FileSystem {
         int parentBlock = pathToBlock.get(currentPath);
         List<DirectoryEntry> parentEntries = readDirectory(parentBlock);
 
-        // 查找源文件
+        
         DirectoryEntry sourceEntry = null;
         for (DirectoryEntry entry : parentEntries) {
             if (entry.getName().equals(sourceName) &&
@@ -222,20 +222,20 @@ public class FileSystem {
             return false;
         }
 
-        // 检查目标文件是否已存在
+      
         for (DirectoryEntry entry : parentEntries) {
             if (entry.getName().equals(destName)) {
                 return false;
             }
         }
 
-        // 读取源文件内容
+      
         String content = readFileContent(sourceName);
         if (content == null) {
             return false;
         }
 
-        // 创建新文件
+        
         return createFile(destName, content);
     }
 
@@ -248,7 +248,7 @@ public class FileSystem {
         int parentBlock = pathToBlock.get(currentPath);
         List<DirectoryEntry> parentEntries = readDirectory(parentBlock);
 
-        // 查找源目录
+     
         DirectoryEntry sourceEntry = null;
         for (DirectoryEntry entry : parentEntries) {
             if (entry.getName().equals(sourceName) &&
@@ -262,29 +262,29 @@ public class FileSystem {
             return false;
         }
 
-        // 检查目标目录是否已存在
+   
         for (DirectoryEntry entry : parentEntries) {
             if (entry.getName().equals(destName)) {
                 return false;
             }
         }
 
-        // 保存当前路径
+       
         String originalPath = currentPath;
 
         try {
-            // 创建目标目录
+            
             if (!createDirectory(destName)) {
                 return false;
             }
 
-            // 进入源目录
+         
             if (!changeDirectory(sourceName)) {
                 return false;
             }
             List<DirectoryEntry> sourceEntries = getCurrentDirectoryEntries();
 
-            // 进入目标目录
+          
             if (!changeDirectory("..")) {
                 return false;
             }
@@ -292,13 +292,13 @@ public class FileSystem {
                 return false;
             }
 
-            // 复制所有文件和子目录
+          
             for (DirectoryEntry entry : sourceEntries) {
                 if (entry.getType() == DirectoryEntry.FileType.FILE) {
-                    // 复制文件
+              
                     copyFile(entry.getName(), entry.getName());
                 } else if (entry.getType() == DirectoryEntry.FileType.DIRECTORY) {
-                    // 递归复制子目录
+                 
                     copyDirectory(entry.getName(), entry.getName());
                 }
             }
@@ -308,7 +308,7 @@ public class FileSystem {
             e.printStackTrace();
             return false;
         } finally {
-            // 返回原路径
+         
             changeDirectory(originalPath);
         }
     }
