@@ -8,7 +8,7 @@ public class DirectoryEntry {
     public enum FileType {
         DIRECTORY, FILE
     }
-
+        
     private String name;
     private FileType type;
     private int firstBlock;
@@ -24,7 +24,7 @@ public class DirectoryEntry {
         this.createTime = System.currentTimeMillis();
         this.modifyTime = System.currentTimeMillis();
     }
-
+ 
     public DirectoryEntry(String name, FileType type, int firstBlock, int size) {
         this.name = name;
         this.type = type;
