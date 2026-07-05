@@ -20,31 +20,31 @@ public class FileSystemGUI extends JFrame {
         setSize(1200, 800);
         setLayout(new BorderLayout());
 
-        // 初始化文件系统
+      
         fs = new FileSystem("filesystem.dat");
 
-        // 创建菜单栏
+     
         createMenuBar();
 
-        // 创建主面板
+       
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // 左侧面板 - 目录树和文件列表
+    
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.setPreferredSize(new Dimension(400, 0));
 
-        // 路径显示和导航面板
+      
         JPanel navPanel = new JPanel(new BorderLayout());
 
-        // 路径显示
+      
         JPanel pathPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pathLabel = new JLabel("当前路径: /");
         pathPanel.add(pathLabel);
 
-        // 按钮面板
+       
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-        // 返回按钮
+       
         backButton = new JButton("← 返回上级");
         backButton.addActionListener(e -> goBack());
         backButton.setEnabled(false);
@@ -62,7 +62,7 @@ public class FileSystemGUI extends JFrame {
 
         leftPanel.add(navPanel, BorderLayout.NORTH);
 
-        // 文件表格
+     
         tableModel = new DefaultTableModel(new String[]{"名称", "类型", "大小", "修改时间"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -73,7 +73,7 @@ public class FileSystemGUI extends JFrame {
         fileTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         fileTable.setRowHeight(25);
 
-        // 添加双击事件
+  
         fileTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -83,7 +83,7 @@ public class FileSystemGUI extends JFrame {
                         String name = (String) tableModel.getValueAt(row, 0);
                         String type = (String) tableModel.getValueAt(row, 1);
                         if (type.equals("目录")) {
-                            // 进入目录
+                         
                             if (fs.changeDirectory(name)) {
                                 pathLabel.setText("当前路径: " + fs.getCurrentPath());
                                 backButton.setEnabled(!fs.getCurrentPath().equals("/"));
@@ -91,7 +91,7 @@ public class FileSystemGUI extends JFrame {
                                 updateDiskStatus();
                             }
                         } else {
-                            // 查看文件内容
+                      
                             showFileContent(name);
                         }
                     }
@@ -99,7 +99,7 @@ public class FileSystemGUI extends JFrame {
             }
         });
 
-        // 添加右键菜单
+        
         JPopupMenu popupMenu = createPopupMenu();
 
         fileTable.addMouseListener(new MouseAdapter() {
@@ -131,21 +131,21 @@ public class FileSystemGUI extends JFrame {
 
         mainPanel.add(leftPanel, BorderLayout.WEST);
 
-        // 右侧面板 - 磁盘状态和文件内容
+        
         JPanel rightPanel = new JPanel(new BorderLayout());
 
-        // 磁盘块状态
+        
         diskStatusPanel = new JPanel(new GridLayout(10, 10, 2, 2));
         diskStatusPanel.setBorder(BorderFactory.createTitledBorder("磁盘块状态"));
         updateDiskStatus();
 
         rightPanel.add(diskStatusPanel, BorderLayout.NORTH);
 
-        // 文件内容显示
+        
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBorder(BorderFactory.createTitledBorder("文件内容查看器"));
 
-        // 工具栏
+        
         JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         viewFileButton = new JButton("查看选中文件");
         viewFileButton.addActionListener(e -> {
@@ -180,11 +180,11 @@ public class FileSystemGUI extends JFrame {
         fileContentArea.setForeground(Color.BLACK);
         fileContentArea.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
-        // 添加文件信息显示
+      
         JPanel contentDisplayPanel = new JPanel(new BorderLayout());
         contentDisplayPanel.add(new JScrollPane(fileContentArea), BorderLayout.CENTER);
 
-        // 添加状态标签
+       
         JLabel fileInfoLabel = new JLabel("当前未选择文件");
         fileInfoLabel.setFont(new Font("Arial", Font.PLAIN, 10));
         fileInfoLabel.setForeground(Color.GRAY);
@@ -198,10 +198,10 @@ public class FileSystemGUI extends JFrame {
 
         add(mainPanel, BorderLayout.CENTER);
 
-        // 底部状态栏
+      
         createStatusBar();
 
-        // 初始化文件列表
+       
         refreshFileList();
         backButton.setEnabled(!fs.getCurrentPath().equals("/"));
 
@@ -272,7 +272,7 @@ public class FileSystemGUI extends JFrame {
     private void createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        // 文件菜单
+       
         JMenu fileMenu = new JMenu("文件");
         JMenuItem createFile = new JMenuItem("创建文件");
         createFile.addActionListener(e -> showCreateFileDialog());
@@ -315,7 +315,7 @@ public class FileSystemGUI extends JFrame {
 
         menuBar.add(fileMenu);
 
-        // 导航菜单
+      
         JMenu navMenu = new JMenu("导航");
         JMenuItem backItem = new JMenuItem("返回上级");
         backItem.addActionListener(e -> goBack());
@@ -324,7 +324,7 @@ public class FileSystemGUI extends JFrame {
         JMenuItem rootItem = new JMenuItem("返回根目录");
         rootItem.addActionListener(e -> {
             while (fs.changeDirectory("..")) {
-                // 一直返回到根目录
+             
             }
             pathLabel.setText("当前路径: " + fs.getCurrentPath());
             backButton.setEnabled(!fs.getCurrentPath().equals("/"));
@@ -335,7 +335,7 @@ public class FileSystemGUI extends JFrame {
 
         menuBar.add(navMenu);
 
-        // 查看菜单
+        
         JMenu viewMenu = new JMenu("查看");
         JMenuItem refreshItem = new JMenuItem("刷新");
         refreshItem.addActionListener(e -> {
@@ -352,7 +352,7 @@ public class FileSystemGUI extends JFrame {
 
         menuBar.add(viewMenu);
 
-        // 帮助菜单
+  
         JMenu helpMenu = new JMenu("帮助");
         JMenuItem aboutItem = new JMenuItem("关于");
         aboutItem.addActionListener(e -> {
@@ -454,7 +454,7 @@ public class FileSystemGUI extends JFrame {
         info.append("状态: ").append(status).append("\n");
 
         if (fat[blockNum] != -1 && fat[blockNum] != -2) {
-            // 查找使用该块的文件
+          
             List<DirectoryEntry> entries = fs.getCurrentDirectoryEntries();
             boolean found = false;
             for (DirectoryEntry entry : entries) {
@@ -474,7 +474,7 @@ public class FileSystemGUI extends JFrame {
             }
         }
 
-        // 显示块数据的前100个字节
+        
         if (blockNum >= 0 && blockNum < Disk.TOTAL_BLOCKS) {
             byte[] data = fs.getDisk().readBlock(blockNum);
             info.append("\n数据预览:\n");
@@ -496,7 +496,7 @@ public class FileSystemGUI extends JFrame {
     private void showFileContent(String fileName) {
         String content = fs.readFileContent(fileName);
         if (content != null) {
-            // 显示文件信息
+          
             List<DirectoryEntry> entries = fs.getCurrentDirectoryEntries();
             DirectoryEntry fileEntry = null;
             for (DirectoryEntry entry : entries) {
@@ -606,7 +606,7 @@ public class FileSystemGUI extends JFrame {
     }
 
     private void showCopyDialog() {
-        // 创建复制对话框
+   
         JDialog dialog = new JDialog(this, "复制文件/目录", true);
         dialog.setLayout(new BorderLayout());
         dialog.setSize(500, 350);
@@ -617,7 +617,7 @@ public class FileSystemGUI extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // 源文件选择
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
         panel.add(new JLabel("源名称:"), gbc);
@@ -625,7 +625,7 @@ public class FileSystemGUI extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 0;
         JTextField sourceField = new JTextField(20);
-        // 如果有选中项，自动填入
+
         int row = fileTable.getSelectedRow();
         if (row != -1) {
             String name = (String) tableModel.getValueAt(row, 0);
@@ -633,13 +633,13 @@ public class FileSystemGUI extends JFrame {
         }
         panel.add(sourceField, gbc);
 
-        // 源类型显示
+   
         gbc.gridx = 2;
         gbc.gridy = 0;
         JLabel typeLabel = new JLabel("文件");
         panel.add(typeLabel, gbc);
 
-        // 目标名称
+   
         gbc.gridx = 0;
         gbc.gridy = 1;
         panel.add(new JLabel("目标名称:"), gbc);
@@ -649,7 +649,7 @@ public class FileSystemGUI extends JFrame {
         JTextField destField = new JTextField();
         panel.add(destField, gbc);
 
-        // 复制选项
+      
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 3;
@@ -659,7 +659,7 @@ public class FileSystemGUI extends JFrame {
 
         dialog.add(panel, BorderLayout.CENTER);
 
-        // 按钮面板
+      
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton copyButton = new JButton("复制");
         JButton cancelButton = new JButton("取消");
@@ -673,7 +673,7 @@ public class FileSystemGUI extends JFrame {
                 return;
             }
 
-            // 检查源是否存在并获取类型
+          
             List<DirectoryEntry> entries = fs.getCurrentDirectoryEntries();
             DirectoryEntry sourceEntry = null;
             for (DirectoryEntry entry : entries) {
@@ -690,10 +690,10 @@ public class FileSystemGUI extends JFrame {
 
             boolean success = false;
             if (sourceEntry.getType() == DirectoryEntry.FileType.FILE) {
-                // 复制文件
+               
                 success = fs.copyFile(source, dest);
             } else {
-                // 复制目录
+              
                 if (recursiveCheck.isSelected()) {
                     success = fs.copyDirectory(source, dest);
                 } else {
@@ -721,7 +721,7 @@ public class FileSystemGUI extends JFrame {
         buttonPanel.add(cancelButton);
         dialog.add(buttonPanel, BorderLayout.SOUTH);
 
-        // 监听源文件输入变化
+        
         sourceField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void changedUpdate(javax.swing.event.DocumentEvent e) { updateType(); }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { updateType(); }
